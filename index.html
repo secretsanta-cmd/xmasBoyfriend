@@ -1,80 +1,189 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Xmas boyfriend (il est un peu taré dsl)</title>
-    <style>
-        body { font-family: Arial; background:#f2f2f2; }
-        #login, #chat { max-width:400px; margin: 2rem auto; padding:20px; background:white; border-radius:10px; }
-        #chat { display:none; }
-        #messages { height:300px; overflow-y:auto; border:1px solid #ccc; padding:10px; margin-bottom:10px; }
-        .msg { margin:5px 0; padding:8px; border-radius:5px; }
-        .you { background:#d1e7ff; text-align:left; }
-        .ia { background:#d9ffd9; text-align:right; }
-    </style>
+<meta charset="UTF-8">
+<title>Xmas boyfriend (il est un peu taré dsl)</title>
+<style>
+/* Body et fond */
+body {
+    font-family: Arial, sans-serif;
+    background: url('https://images.unsplash.com/photo-1605902711622-cfb43c4430db?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+/* Login */
+#login, #chat {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 20px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 10px;
+}
+
+#chat { display: none; }
+
+#messages {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 10px;
+}
+
+/* Messages */
+.msg { 
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    max-width: 80%;
+    animation: pop 0.5s ease;
+}
+
+.msg.you {
+    background: rgba(255,200,200,0.8);
+    justify-content: flex-start;
+}
+
+.msg.ia {
+    background: rgba(200,255,200,0.8);
+    justify-content: flex-end;
+}
+
+/* Avatars */
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin: 0 5px;
+}
+
+/* Animations */
+@keyframes pop {
+    0% { transform: scale(0); }
+    80% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+/* Flocons */
+.flocon {
+    position: absolute;
+    top: -50px;
+    color: white;
+    font-size: 1.5rem;
+    animation: tomber 10s linear infinite;
+}
+@keyframes tomber {
+    0% { transform: translateY(-50px) translateX(0); }
+    100% { transform: translateY(100vh) translateX(50px); }
+}
+</style>
 </head>
 <body>
 
+<!-- Musique de Noël -->
+<audio autoplay loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Login -->
 <div id="login">
-    <h2>Accès secret !!</h2>
+    <h2>Accès secret</h2>
     <input id="pwd" type="password" placeholder="Mot de passe">
     <button onclick="login()">Entrer</button>
     <p id="err" style="color:red;"></p>
 </div>
 
+<!-- Chat -->
 <div id="chat">
-    <h2>Xmas boyfriend (il est un peu taré dsl)</h2>
+    <h2>Xmas bf (le fou)(pardon) 🎄</h2>
     <div id="messages"></div>
     <input id="msg" type="text" placeholder="Écris ton message...">
     <button onclick="sendMessage()">Envoyer</button>
 </div>
 
+<!-- Flocons -->
 <script>
-const PASSWORD = "secretsanta";
+for (let i=0;i<30;i++){
+    let f = document.createElement('div');
+    f.className='flocon';
+    f.style.left=Math.random()*window.innerWidth+'px';
+    f.innerText='❄';
+    f.style.animationDuration=(5+Math.random()*5)+'s';
+    document.body.appendChild(f);
+}
+</script>
+
+<!-- Confettis -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+<script>
+confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+</script>
+
+<!-- Chat JS -->
+<script>
+const PASSWORD = "secretsanta"; // change le mot de passe
+const BACKEND_URL = "https://secretsanta-chat-bend.onrender.com/api/chat"; // change ton backend Render
 
 function login() {
     const input = document.getElementById("pwd").value;
-    if (input === PASSWORD) {
-        document.getElementById("login").style.display = "none";
-        document.getElementById("chat").style.display = "block";
+    if(input===PASSWORD){
+        document.getElementById("login").style.display="none";
+        document.getElementById("chat").style.display="block";
     } else {
-        document.getElementById("err").innerText = "Mauvais mot de passe !";
+        document.getElementById("err").innerText="Mauvais mot de passe !";
     }
 }
 
-function addMessage(text, sender) {
-    const div = document.createElement("div");
-    div.className = "msg " + sender;
-    div.innerText = text;
+function addMessage(text,sender){
+    const div=document.createElement("div");
+    div.className="msg "+sender;
+
+    // avatar
+    const img=document.createElement("img");
+    img.className="avatar";
+    img.src= sender==="you" ? "https://cdn-icons-png.flaticon.com/512/1/1757.png" : "https://cdn-icons-png.flaticon.com/512/1995/1995580.png";
+    
+    if(sender==="you"){
+        div.appendChild(img);
+        div.appendChild(document.createTextNode(text));
+    } else {
+        div.appendChild(document.createTextNode(text));
+        div.appendChild(img);
+    }
+
     document.getElementById("messages").appendChild(div);
+    document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
 }
 
-async function sendMessage() {
-    const text = document.getElementById("msg").value;
-    if (!text) return;
-
-    addMessage(text, "you");
-    document.getElementById("msg").value = "";
+async function sendMessage(){
+    const text=document.getElementById("msg").value;
+    if(!text) return;
+    addMessage(text,"you");
+    document.getElementById("msg").value="";
 
     try {
-        const response = await fetch("https://secretsanta-chat-bend.onrender.com/api/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: text })
+        const response=await fetch(BACKEND_URL,{
+            method:"POST",
+            headers:{ "Content-Type": "application/json" },
+            body: JSON.stringify({message:text})
         });
 
-        if (!response.ok) {
-            throw new Error("Erreur serveur : " + response.status);
-        }
+        if(!response.ok) throw new Error("Erreur serveur "+response.status);
 
-        const data = await response.json();
-        addMessage(data.reply, "ia");
-    } catch (err) {
+        const data=await response.json();
+        addMessage(data.reply,"ia");
+    } catch(err){
         console.error(err);
-        addMessage("Erreur : impossible de contacter le serveur.", "ia");
+        addMessage("Erreur : impossible de contacter le serveur.","ia");
     }
 }
-
 </script>
 
 </body>
