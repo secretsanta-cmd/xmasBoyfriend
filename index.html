@@ -2,12 +2,12 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Xmas boyfriend (il est un peu taré dsl)</title>
+<title>Xmas boyfriend (il est un peu chelou dsl)</title>
 <style>
-/* Body et fond */
+/* Fond général */
 body {
-    font-family: Arial, sans-serif;
-    background: url('https://images.unsplash.com/photo-1605902711622-cfb43c4430db?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    font-family: Arial;
+    background: url('https://www.homemaison.com/blog/wp-content/uploads/2023/11/KPK_1784443_AMB.jpg') no-repeat center center fixed;
     background-size: cover;
     margin: 0;
     padding: 0;
@@ -19,8 +19,9 @@ body {
     max-width: 400px;
     margin: 2rem auto;
     padding: 20px;
-    background: rgba(255,255,255,0.9);
+    background: rgba(255,255,255,0.9); /* semi-transparent */
     border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
 }
 
 #chat { display: none; }
@@ -28,11 +29,11 @@ body {
 #messages {
     height: 300px;
     overflow-y: auto;
-    border: 1px solid #ccc;
     padding: 10px;
     margin-bottom: 10px;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.8); /* encore plus transparent */
     border-radius: 10px;
+    border: 1px solid #ccc;
 }
 
 /* Messages */
@@ -83,6 +84,15 @@ body {
     0% { transform: translateY(-50px) translateX(0); }
     100% { transform: translateY(100vh) translateX(50px); }
 }
+
+/* Boutons et inputs */
+input, button {
+    padding: 8px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+button { cursor: pointer; }
 </style>
 </head>
 <body>
@@ -94,7 +104,7 @@ body {
 
 <!-- Login -->
 <div id="login">
-    <h2>Accès secret</h2>
+    <h2>Accès secret !!</h2>
     <input id="pwd" type="password" placeholder="Mot de passe">
     <button onclick="login()">Entrer</button>
     <p id="err" style="color:red;"></p>
@@ -102,7 +112,7 @@ body {
 
 <!-- Chat -->
 <div id="chat">
-    <h2>Xmas bf (le fou)(pardon) 🎄</h2>
+    <h2>Xmas BF (hihi il est bizarre dsl) 🎄</h2>
     <div id="messages"></div>
     <input id="msg" type="text" placeholder="Écris ton message...">
     <button onclick="sendMessage()">Envoyer</button>
@@ -125,7 +135,6 @@ for (let i=0;i<30;i++){
 <script>
 confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
 </script>
-
 <!-- Chat JS -->
 <script>
 const PASSWORD = "secretsanta"; // change le mot de passe
